@@ -2,14 +2,12 @@ import React from "react";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import {
-  CircleArrowDown,
-  CircleArrowUp,
-  SquarePen,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
-const Header = () => {
+import { CircleArrowDown, CircleArrowUp } from "lucide-react";
+import { checkUser } from "@/actions/checkUser";
+
+const Header = async () => {
+  await checkUser();
+
   return (
     <div className="fixed top-0 border-b z-50 bg-white/80 backdrop-blur-md w-full ">
       <nav className="flex items-center justify-between px-4 py-3">

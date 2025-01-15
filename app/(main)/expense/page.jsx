@@ -16,7 +16,7 @@ const ExpensePage = () => {
   return (
     <div className="container mx-auto border p-4 max-w-7xl mt-8 shadow-sm rounded-md">
       {/* Header Section */}
-      <section className="flex items-center justify-between">
+      <section className="flex items-center justify-between mb-4">
         <h2 className="gradient-subTitle text-3xl">Expense Page</h2>
         <Link href="/">
           <Button>Add Expense</Button>
@@ -24,10 +24,10 @@ const ExpensePage = () => {
       </section>
 
       {/* Expense Chart */}
-      <section className="mt-4"></section>
+      <section className="mb-4"></section>
 
       {/* Expense Transaction Table */}
-      <section className="mt-4">
+      <section className="mb-4">
         <Table>
           <TableCaption>A list of your recent invoices.</TableCaption>
           <TableHeader>
