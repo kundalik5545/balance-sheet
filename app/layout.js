@@ -1,13 +1,10 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import Header from "@/components/CommanComponets/Header";
 
-const geistSans = Geist({
+const inter = Inter({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -18,12 +15,24 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${inter.className} antialiased`}>
+          <header>
+            <Header />
+          </header>
+          {/* Main Section */}
+          <main className="container min-h-screen mx-auto my-20">
+            {children}
+          </main>
+
+          {/* Footer */}
+          <footer className="bg-blue-100 py-4 text-center">
+            <p>Made In Love By coder jk...</p>
+            <p>All Rights Reserved.</p>
+          </footer>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

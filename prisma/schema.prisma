@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String               @id @default(uuid())
+  clerkUserId        String               @unique
+  name               String?
+  email              String               @unique
+  imageUrl           String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  Expense            Expense[]
+  Income             Income[]
+  BankAccount        BankAccount[]
+  AccountTransaction AccountTransaction[]
+
+  @@map("users")
+}
+
+model Expense {
+  id          Int       @id @unique @default(autoincrement())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  category    String
+  subCategory String
+  amount      Float
+  date        DateTime?
+  descrition  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("expenses")
+}
+
+model Income {
+  id         Int       @id @unique @default(autoincrement())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
+  category   String
+  amount     Float
+  date       DateTime?
+  descrition String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("incomes")
+}
+
+model BankAccount {
+  id                 String               @id @default(uuid())
+  user               User                 @relation(fields: [userId], references: [id])
+  userId             String
+  bankName           String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  AccountTransaction AccountTransaction[]
+
+  @@map("bank_accounts")
+}
+
+model AccountTransaction {
+  id                Int         @id @default(autoincrement())
+  user              User        @relation(fields: [userId], references: [id])
+  userId            String
+  bankAccount       BankAccount @relation(fields: [bankAccountId], references: [id])
+  bankAccountId     String
+  dateOfTransaction DateTime?
+  openingBalance    Float?
+  currentBalance    Float?
+  totalDeposite     Float?
+  totalWithdrawal   Float?
+  remainingBalance  Float?
+  descrition        String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@map("account_transactions")
+}

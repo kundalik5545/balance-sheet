@@ -1,15 +1,15 @@
 import Link from "next/link";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-export default function Home() {
+
+const MainLayout = ({ children }) => {
   return (
     <div>
-      {/* Main Page layout */}
       <section>
         <h1 className="gradient-title text-3xl sm:text-6xl text-center pt-4 sm:pt-6">
           Steps To Start Planning Your Feature.
         </h1>
-        <div className="sm:flex sm:items-center sm:justify-around sm:pt-5 gap-4 pb-6">
+        <div className=" sm:flex sm:items-center sm:justify-around sm:pt-5 gap-4 pb-6">
           {/* Step 01 */}
           <div className="flex items-center space-x-2 space-y-2 mt-5 p-3 sm:p-0">
             <h2 className="text-2xl gradient-subTitle">Step 01:- </h2>
@@ -70,10 +70,11 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="pt-5 border min-h-20">Render page</section>
+      {/* other  */}
+      <section>{children}</section>
     </div>
   );
-}
+};
 
 const StepsCard = ({ title }) => {
   return (
@@ -84,3 +85,5 @@ const StepsCard = ({ title }) => {
     </Card>
   );
 };
+
+export default MainLayout;
