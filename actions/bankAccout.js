@@ -299,3 +299,130 @@ export const editBank = async (id, data) => {
     };
   }
 };
+
+// Total Bank Account Balance by user id
+export const totalBankAccountBalance = async () => {
+  try {
+    // 1. Check if user exists and is logged in
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized User!");
+
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // 2. Get total bank account balance
+    const totalBalance = await prisma.bankAccount.aggregate({
+      where: {
+        userId: user.id,
+      },
+      _sum: {
+        openingBalance: true,
+      },
+    });
+
+    const totalOpeningBalance = totalBalance._sum.openingBalance || 0; // Use the summed value or default to 0 if null
+
+    if (!totalBalance) throw new Error("Total bank account balance not found");
+
+    // 3. Get total income for current month
+    const totalIncome = await prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "INCOME",
+        date: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const totalAmount = totalIncome._sum.amount || 0; // Use the summed value or default to 0 if null
+
+    if (!totalIncome) throw new Error("Total income not found");
+
+    // 4. Get total expense for current month
+    const totalExpense = await prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "EXPENSE",
+        date: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const totalMonthlyExpense_ThisMonth = totalExpense._sum.amount || 0; // Use the summed value or default to 0 if null
+
+    if (!totalIncome) throw new Error("Total income not found");
+
+    return {
+      success: true,
+      message: "Total bank account balance fetched successfully",
+      totalBalanceThisMonth: totalOpeningBalance,
+      totalIncomeThisMonth: totalAmount,
+      totalExpenseThisMonth: totalMonthlyExpense_ThisMonth,
+    };
+  } catch (error) {
+    console.error("Error getting total bank account balance:", error.message);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+//total income for current month from transaction table with type as "INCOME"
+export const totalIncome = async () => {
+  try {
+    // 1. Check if user exists and is logged in
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized User!");
+
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // 2. Get total income for current month
+    const totalIncome = await prisma.transaction.aggregate({
+      where: {
+        userId: user.id,
+        type: "INCOME",
+        date: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+          lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const totalAmount = totalIncome._sum.amount || 0; // Use the summed value or default to 0 if null
+
+    if (!totalIncome) throw new Error("Total income not found");
+
+    return {
+      success: true,
+      message: "Total income fetched successfully",
+      data: totalAmount,
+    };
+  } catch (error) {
+    console.error("Error getting total income:", error.message);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};

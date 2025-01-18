@@ -15,6 +15,9 @@ import DisplayBankAccount from "./_components/DisplayBankAccount";
 import BankAccountTable from "./_components/BankAccountTable";
 import AddBankForm from "./_components/AddBankForm";
 import { BankAccountContext } from "./_components/BankAccountContext";
+import { totalBankAccountBalance } from "@/actions/bankAccout";
+import { toast } from "sonner";
+import BankBarChart from "./_components/BarChart";
 
 const BankAccountPage = () => {
   const [open, setOpen] = useState(false);
@@ -23,6 +26,44 @@ const BankAccountPage = () => {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
+  const [bankBalance, setBankBalance] = useState();
+  const [monthlyIncome, setMonthlyIncome] = useState();
+  const [monthlyExpense, setMonthlyExpense] = useState();
+  const [remainingBalance, setRemainingBalance] = useState();
+
+  //balance formatter in indian ruppes format
+  const formatter = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  });
+
+  //finding total income in current month from transaction table with type incomeuseEffect(() => {
+
+  const fetchFinancialSummary = async () => {
+    try {
+      const response = await totalBankAccountBalance();
+      if (response.success) {
+        setBankBalance(formatter.format(response.totalBalanceThisMonth));
+        setMonthlyIncome(formatter.format(response.totalIncomeThisMonth));
+        setMonthlyExpense(formatter.format(response.totalExpenseThisMonth));
+        // Calculate remaining balance and format for display
+        const balance =
+          response.totalIncomeThisMonth - response.totalExpenseThisMonth;
+        setRemainingBalance(formatter.format(balance));
+
+        return chartData;
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while fetching financial data.");
+    }
+  };
+
+  useEffect(() => {
+    fetchFinancialSummary();
+  }, []);
 
   return (
     <BankAccountContext.Provider
@@ -64,7 +105,7 @@ const BankAccountPage = () => {
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <QuickStatCard
             topTitle={"Total Balance"}
-            MainAmt={"85,450"}
+            MainAmt={bankBalance}
             iconName={<DollarSign />}
             statsChange={"+3.4% Increase from last month."}
             statTextColor={"text-green-500"}
@@ -72,7 +113,7 @@ const BankAccountPage = () => {
           />
           <QuickStatCard
             topTitle={"Monthly Income"}
-            MainAmt={"75,450"}
+            MainAmt={monthlyIncome}
             iconName={<CircleArrowUp color="blue" />}
             statsChange={"+3.4% Increase from last month."}
             statTextColor={"text-blue-500"}
@@ -80,15 +121,15 @@ const BankAccountPage = () => {
           />
           <QuickStatCard
             topTitle={"Monthly Expense"}
-            MainAmt={"50,450"}
+            MainAmt={monthlyExpense}
             iconName={<CircleArrowDown color="red" />}
             statsChange={"+3.4% Increase from last month."}
             statTextColor={"text-red-500"}
             bgColor={"bg-red-200"}
           />
           <QuickStatCard
-            topTitle={"Total Balance"}
-            MainAmt={"30,440"}
+            topTitle={"Income - Expense"}
+            MainAmt={remainingBalance}
             iconName={<TrendingUp />}
             statsChange={"+3.4% Increase from last month."}
             statTextColor={"text-purple-500"}
@@ -106,7 +147,12 @@ const BankAccountPage = () => {
         
         */}
         <section className="flex justify-between flex-wrap">
-          <InvestmentChart />
+          <BankBarChart
+            bankBalance={bankBalance}
+            Income={monthlyIncome}
+            Expense={monthlyExpense}
+            remainingBalance={remainingBalance}
+          />
           <InvestmentChart />
         </section>
 

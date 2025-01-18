@@ -1,5 +1,6 @@
 "use client";
 
+import { totalBankAccountBalance, totalIncome } from "@/actions/bankAccout";
 import {
   addBank,
   addTransaction,
@@ -21,6 +22,19 @@ const AddIncomeForm = () => {
     loading: loading2,
     error,
   } = useFetch(addBank);
+  //total bank account balance per userid
+  const {
+    apiFun: apiFn3,
+    apiRes: apiRes3,
+    loading: loading3,
+  } = useFetch(totalBankAccountBalance);
+
+  // finding total income in current month from transaction table with type income
+  // const {
+  //   apiFun: apiFn3,
+  //   apiRes: apiRes3,
+  //   loading: loading3,
+  // } = useFetch(totalIncome);
 
   // console.log("backend response to frontend:- ", apiRes1);
   // console.log("backend response to frontend:- ", apiRes2);
@@ -33,25 +47,34 @@ const AddIncomeForm = () => {
   };
 
   const addTransactionData = {
-    bankAccountId: "a828b2f3-b8b3-4fc2-a2b0-b50a08fe14b0",
-    transferAccountId: "0a1f3742-8e06-4718-a177-f6b9ed511795",
+    bankAccountId: "f73e8a1c-0c43-43ef-a12d-62435efe9b61",
+    // transferAccountId: "0a1f3742-8e06-4718-a177-f6b9ed511795",
     // accountBalanceId: "0db6c31d-e3e1-4068-890c-ad096d9674e4",
-    type: "TRANSFER",
-    category: "SELF",
-    amount: 50,
+    type: "INCOME",
+    category: "Salary",
+    amount: 50000,
     date: new Date().toISOString(),
     description: "Enjoy the money!!!.",
     status: "COMPLETED",
   };
 
+  console.log("total income in current month:- ", apiRes3);
+
   return (
     <div>
       <h2>Fetch current balance</h2>
-      <Button onClick={() => apiFn1(addTransactionData)}>Add Trans</Button>
-      <Button onClick={() => apiFn2(addBankData)}>Add bank</Button>
+      <div className=" flex flex-col space-y-4 w-[300px] pt-4">
+        <Button onClick={() => apiFn1(addTransactionData)}>Add Trans</Button>
+        {/* <Button onClick={() => apiFn2(addBankData)} disable>
+          Add bank
+        </Button> */}
+        <Button onClick={() => apiFn3()}>
+          Total bank account balance per userid
+        </Button>
+      </div>
 
       {loading1 && <p>Loading...</p>}
-      {loading2 && <p>Loading...</p>}
+      {loading3 && <p>Loading...</p>}
     </div>
   );
 };

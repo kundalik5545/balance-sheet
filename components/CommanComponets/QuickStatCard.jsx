@@ -14,7 +14,7 @@ const QuickStatCard = ({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-neutral-500 tracking-wider">{topTitle}</p>
-          <h3 className="text-2xl font-bold text-neutral-800">₹{MainAmt}</h3>
+          <h3 className="text-2xl font-bold text-neutral-800">{MainAmt}</h3>
         </div>
         <div className={clsx("p-2 rounded-lg", `${bgColor}`)}>{iconName}</div>
       </div>
