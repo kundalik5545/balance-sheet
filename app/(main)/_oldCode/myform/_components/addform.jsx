@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -12,28 +12,17 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/button";
 import { CheckCheck, Landmark, Loader, Plus } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { get, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { addBankSchema } from "@/app/lib/Schema";
 import { toast } from "sonner";
-import { editBankAccount } from "@/actions/oldCode/banks";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import useMyBank from "./useMyBank";
+import { editBank } from "@/actions/oldCode/myBank";
 
-const AddBankForm = ({
-  children,
-  createBankAccountFn,
-  creatBankLoading,
-  createBankError,
-  createBank,
-  open,
-  setOpen,
-  edit,
-  editAccId,
-  bankAccounts,
-  fetchBankAccountFn,
-}) => {
+const AddForm = ({ children, open, setOpen, edit, setEdit, editFormData }) => {
   const {
     register,
     handleSubmit,
@@ -47,68 +36,82 @@ const AddBankForm = ({
     defaultValues: { bankName: "" },
   });
 
+  const {
+    //   Create bank
+    createBankFn,
+    createBankRes,
+    createBankLoading,
+    createBankError,
+    // Fetch Bank
+    getBankFn,
+    getBankRes,
+    getBankError,
+    getBankLoading,
+  } = useMyBank();
+
+  const handleReset = () => {
+    setOpen(false);
+    setEdit(false);
+    reset({ bankName: "" });
+  };
+
   useEffect(() => {
-    if (edit && editAccId) {
-      // Fetch the account data using editAccId and set the form values
-      const account = bankAccounts.data.bankAccounts.find(
-        (account) => account.id === editAccId
+    if (edit && editFormData) {
+      // Populate the form fields with editFormData
+      Object.keys(editFormData).forEach((key) =>
+        setValue(key, editFormData[key])
       );
-      if (account) {
-        setValue("bankName", account.bankName);
-      }
+    } else {
+      // Reset the form when not in edit mode
+      reset({ bankName: "" });
     }
-  }, [edit, editAccId, bankAccounts, setValue]);
+  }, [edit, editFormData, setValue, reset]);
 
   const onSubmit = async (data) => {
     if (edit) {
-      const response = await edditBankAccount(editAccId, data);
+      // Edit Bank Account
+      const response = await editBank(editFormData.id, data);
       if (response.success) {
         toast.success(response.message);
         handleReset();
-        await fetchBankAccountFn();
       } else {
         toast.error(response.message);
       }
     } else {
       // Create Bank Account
-      const response = await createBankAccountFn(data);
-      if (response.success) {
-        toast.success(response.message);
-        handleReset();
-        await fetchBankAccountFn();
-      } else {
-        toast.error(response.message);
-      }
+      await createBankFn(data);
     }
   };
 
-  const handleReset = () => {
-    setOpen(false);
-    reset();
-  };
+  useEffect(() => {
+    if (createBankRes && !createBankLoading) {
+      if (createBankRes.success) {
+        toast.success(createBankRes.message);
+        handleReset();
+      } else {
+        toast.error(createBankRes.message);
+      }
+    }
+  }, [createBankRes, createBankLoading]);
 
   useEffect(() => {
     if (createBankError) {
-      toast.error(createBankError.message);
-      console.log(createBankError);
+      toast.error(createBankError.message || "An unexpected error occurred.");
+      console.error(createBankError);
     }
   }, [createBankError]);
 
-  useEffect(() => {
-    if (createBank && !creatBankLoading) {
-      if (createBank.success) {
-        toast.success(createBank.message);
-        handleReset();
-        fetchBankAccountFn();
-      } else {
-        toast.error(createBank.message);
-      }
-    }
-  }, [creatBankLoading, createBank]);
-
   return (
     <div>
-      <Drawer open={open} onOpenChange={setOpen}>
+      <Drawer
+        open={open}
+        onOpenChange={(isOpen) => {
+          setOpen(isOpen);
+          if (!isOpen) {
+            handleReset();
+          }
+        }}
+      >
         <DrawerTrigger asChild>{children}</DrawerTrigger>
         <DrawerContent className="flex sm:w-[500px] md:w-[700px] lg:w-[900px] container mx-auto md:p-4 pb-10">
           <DrawerHeader>
@@ -131,6 +134,7 @@ const AddBankForm = ({
                     name="bankName"
                     className="w-full text-black text-base md:text-sm"
                   />
+
                   {errors.bankName && (
                     <p asChild className="text-red-600 text-sm">
                       {errors.bankName.message}
@@ -146,7 +150,7 @@ const AddBankForm = ({
                     className="p-5 md:p-3 text-base md:text-sm"
                   >
                     {edit ? (
-                      creatBankLoading ? (
+                      createBankLoading ? (
                         <>
                           <Loader /> Updating Bank...
                         </>
@@ -156,7 +160,7 @@ const AddBankForm = ({
                           Edit Bank
                         </>
                       )
-                    ) : creatBankLoading ? (
+                    ) : createBankLoading ? (
                       <>
                         <Loader /> Adding Bank...
                       </>
@@ -209,4 +213,4 @@ const AddBankForm = ({
   );
 };
 
-export default AddBankForm;
+export default AddForm;

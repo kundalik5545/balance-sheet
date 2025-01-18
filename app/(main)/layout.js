@@ -34,7 +34,12 @@ const MainLayout = ({ children }) => {
               </div>
               <div className="flex items-center space-x-2">
                 <StepsCard title="3" className="container mx-auto" />
-                <h2>Add Bank Accounts</h2>
+                <Link
+                  href="/bank-account"
+                  className="hover:underline hover:cursor-pointer hover:text-blue-500"
+                >
+                  <h2>Add Bank Accounts</h2>
+                </Link>
               </div>
             </div>
           </div>

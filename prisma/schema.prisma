@@ -9,82 +9,112 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
 model User {
-  id                 String               @id @default(uuid())
-  clerkUserId        String               @unique
-  name               String?
-  email              String               @unique
-  imageUrl           String?
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  Expense            Expense[]
-  Income             Income[]
-  BankAccount        BankAccount[]
-  AccountTransaction AccountTransaction[]
+  id          String  @id @default(uuid())
+  clerkUserId String  @unique
+  name        String?
+  email       String  @unique
+  imageUrl    String?
+
+  BankAccount    BankAccount[]
+  AccountBalance AccountBalance[]
+  Transaction    Transaction[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("users")
 }
 
-model Expense {
-  id          Int       @id @unique @default(autoincrement())
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String
-  category    String
-  subCategory String
-  amount      Float
-  date        DateTime?
-  descrition  String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@map("expenses")
-}
-
-model Income {
-  id         Int       @id @unique @default(autoincrement())
-  user       User      @relation(fields: [userId], references: [id])
-  userId     String
-  category   String
-  amount     Float
-  date       DateTime?
-  descrition String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  @@map("incomes")
-}
-
 model BankAccount {
-  id                 String               @id @default(uuid())
-  user               User                 @relation(fields: [userId], references: [id])
-  userId             String
-  bankName           String
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  AccountTransaction AccountTransaction[]
+  id             String   @id @default(uuid())
+  bankName       String
+  date           DateTime
+  openingBalance Decimal  @default(0) @db.Decimal(10, 2)
+  isDefault      Boolean  @default(false)
+  userId         String
+
+  user           User             @relation(fields: [userId], references: [id])
+  AccountBalance AccountBalance[]
+  Transaction    Transaction[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@map("bank_accounts")
 }
 
-model AccountTransaction {
-  id                Int         @id @default(autoincrement())
-  user              User        @relation(fields: [userId], references: [id])
-  userId            String
-  bankAccount       BankAccount @relation(fields: [bankAccountId], references: [id])
-  bankAccountId     String
-  dateOfTransaction DateTime?
-  openingBalance    Float?
-  currentBalance    Float?
-  totalDeposite     Float?
-  totalWithdrawal   Float?
-  remainingBalance  Float?
-  descrition        String?
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+model AccountBalance {
+  id              String   @id @default(uuid())
+  date            DateTime
+  totalDeposite   Decimal  @default(0) @db.Decimal(10, 2)
+  totalWithdrawal Decimal  @default(0) @db.Decimal(10, 2)
+  totalBalance    Decimal  @default(0) @db.Decimal(10, 2)
+  description     String?
+  userId          String
+  bankAccountId   String
+  transactionId   String
 
-  @@map("account_transactions")
+  user        User        @relation(fields: [userId], references: [id])
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  Transaction Transaction @relation(fields: [transactionId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("accountBalances")
+}
+
+model Transaction {
+  id            String            @id @unique @default(uuid())
+  type          TransactionType
+  category      String
+  amount        Decimal           @default(0) @db.Decimal(10, 2)
+  date          DateTime
+  description   String?
+  status        TransactionStatus @default(COMPLETED)
+  userId        String
+  bankAccountId String
+
+  user           User             @relation(fields: [userId], references: [id])
+  bankAccount    BankAccount      @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  AccountBalance AccountBalance[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // isRecurring       Boolean            @default(false)
+  // recurringInterval RecurringInterval?
+  // nextRecurringDate DateTime?
+  // lastProcessed     DateTime?
+
+  @@index([userId])
+  @@index([bankAccountId])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+  INVESTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum RecurringInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
 }

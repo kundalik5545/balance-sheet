@@ -3,7 +3,7 @@
 import { prisma } from "@/db/db.config";
 import { auth } from "@clerk/nextjs/server";
 
-export const addBankAccount = async (data) => {
+export const addBank = async (data) => {
   try {
     // 1. Check if user exists and is logged in
     const { userId } = await auth();
@@ -46,7 +46,7 @@ export const addBankAccount = async (data) => {
   }
 };
 
-export const getBankAccounts = async () => {
+export const getBank = async () => {
   try {
     // 1. Check if user exists and is logged in
     const { userId } = await auth();
@@ -63,6 +63,9 @@ export const getBankAccounts = async () => {
       where: {
         userId: user.id,
       },
+      orderBy: {
+        bankName: "asc",
+      },
     });
 
     return {
@@ -75,7 +78,7 @@ export const getBankAccounts = async () => {
   }
 };
 
-export const fetchBankAccounts = async (page = 1) => {
+export const getBankAccounts = async (page = 1) => {
   try {
     // 1. Check if user exists and is logged in
     const { userId } = await auth();
@@ -126,20 +129,8 @@ export const fetchBankAccounts = async (page = 1) => {
   }
 };
 
-// With cache
-let bankAccountsCache = {}; // In-memory cache
-
-export const getCacheBankAccounts = async (page = 1) => {
+export const deleteBank = async (id) => {
   try {
-    // Check if data is in cache and still valid
-    const cacheKey = `page_${page}`;
-    if (
-      bankAccountsCache[cacheKey] &&
-      !isCacheExpired(bankAccountsCache[cacheKey].timestamp)
-    ) {
-      return bankAccountsCache[cacheKey].data;
-    }
-
     // 1. Check if user exists and is logged in
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized User!");
@@ -150,46 +141,20 @@ export const getCacheBankAccounts = async (page = 1) => {
 
     if (!user) throw new Error("User not found");
 
-    const pageSize = 10; // Number of records per page
-
-    // 2. Get user bank accounts with pagination
-    const [bankAccounts, totalRecords] = await Promise.all([
-      prisma.BankAccount.findMany({
-        where: {
-          userId: user.id,
-        },
-        skip: (page - 1) * pageSize, // Skip records for previous pages
-        take: pageSize, // Limit to 10 records per page
-      }),
-      prisma.BankAccount.count({
-        where: {
-          userId: user.id,
-        },
-      }),
-    ]);
-
-    const totalPages = Math.ceil(totalRecords / pageSize);
-
-    const responseData = {
-      success: true,
-      message: "Bank accounts fetched successfully",
-      data: {
-        bankAccounts,
-        totalRecords,
-        totalPages,
-        currentPage: page,
+    // 2. Delete bank account
+    const bankAccount = await prisma.BankAccount.delete({
+      where: {
+        id,
       },
-    };
+    });
 
-    // Cache the result
-    bankAccountsCache[cacheKey] = {
-      data: responseData,
-      timestamp: Date.now(),
+    return {
+      success: true,
+      message: "Bank account deleted successfully",
+      data: bankAccount,
     };
-
-    return responseData;
   } catch (error) {
-    console.error("Error getting bank accounts:", error.message);
+    console.error("Error getting investments:", error.message);
     return {
       success: false,
       message: error.message,
@@ -197,26 +162,8 @@ export const getCacheBankAccounts = async (page = 1) => {
   }
 };
 
-// Helper function to check cache expiration
-const isCacheExpired = (timestamp, expirationTime = 4 * 60 * 1000) => {
-  // Default expiration time is 4 minutes
-  return Date.now() - timestamp > expirationTime;
-};
-
-export const fetchCacheBankAccounts = async (page = 1) => {
+export const editBank = async (id, data) => {
   try {
-    // Check if data is in cache and still valid
-    const cacheKey = `page_${page}`;
-    if (
-      bankAccountsCache[cacheKey] &&
-      !isCacheExpired(bankAccountsCache[cacheKey].timestamp)
-    ) {
-      console.log(`Cache hit for page ${page}`); // Log cache hit
-      return bankAccountsCache[cacheKey].data;
-    }
-
-    console.log(`Cache miss for page ${page}. Fetching from server...`); // Log cache miss
-
     // 1. Check if user exists and is logged in
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized User!");
@@ -227,46 +174,23 @@ export const fetchCacheBankAccounts = async (page = 1) => {
 
     if (!user) throw new Error("User not found");
 
-    const pageSize = 10; // Number of records per page
-
-    // 2. Get user bank accounts with pagination
-    const [bankAccounts, totalRecords] = await Promise.all([
-      prisma.BankAccount.findMany({
-        where: {
-          userId: user.id,
-        },
-        skip: (page - 1) * pageSize, // Skip records for previous pages
-        take: pageSize, // Limit to 10 records per page
-      }),
-      prisma.BankAccount.count({
-        where: {
-          userId: user.id,
-        },
-      }),
-    ]);
-
-    const totalPages = Math.ceil(totalRecords / pageSize);
-
-    const responseData = {
-      success: true,
-      message: "Bank accounts fetched successfully",
-      data: {
-        bankAccounts,
-        totalRecords,
-        totalPages,
-        currentPage: page,
+    // 2. Edit bank account
+    const bankAccount = await prisma.BankAccount.update({
+      where: {
+        id,
       },
-    };
+      data: {
+        bankName: data.bankName.toLowerCase(),
+      },
+    });
 
-    // Cache the result
-    bankAccountsCache[cacheKey] = {
-      data: responseData,
-      timestamp: Date.now(),
+    return {
+      success: true,
+      message: "Bank account updated successfully",
+      data: bankAccount,
     };
-
-    return responseData;
   } catch (error) {
-    console.error("Error getting bank accounts:", error.message);
+    console.error("Error getting investments:", error.message);
     return {
       success: false,
       message: error.message,

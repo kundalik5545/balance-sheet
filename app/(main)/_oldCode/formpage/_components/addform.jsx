@@ -12,27 +12,23 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/button";
 import { CheckCheck, Landmark, Loader, Plus } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { get, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { addBankSchema } from "@/app/lib/Schema";
 import { toast } from "sonner";
-import { editBankAccount } from "@/actions/oldCode/banks";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import useBank from "./useBank";
 
-const AddBankForm = ({
+const AddForm = ({
   children,
-  createBankAccountFn,
-  creatBankLoading,
-  createBankError,
-  createBank,
   open,
   setOpen,
   edit,
-  editAccId,
-  bankAccounts,
-  fetchBankAccountFn,
+  setEdit,
+  editAccountId,
+  setEditAccountId,
 }) => {
   const {
     register,
@@ -47,44 +43,84 @@ const AddBankForm = ({
     defaultValues: { bankName: "" },
   });
 
-  useEffect(() => {
-    if (edit && editAccId) {
-      // Fetch the account data using editAccId and set the form values
-      const account = bankAccounts.data.bankAccounts.find(
-        (account) => account.id === editAccId
-      );
-      if (account) {
-        setValue("bankName", account.bankName);
-      }
-    }
-  }, [edit, editAccId, bankAccounts, setValue]);
+  const {
+    createBankAccountFn,
+    createBank,
+    createBankLoading,
+    createBankError,
+    // Fetch Bank
+    fetchBankAccountFn,
+    fetchBankAccounts,
 
-  const onSubmit = async (data) => {
-    if (edit) {
-      const response = await edditBankAccount(editAccId, data);
-      if (response.success) {
-        toast.success(response.message);
-        handleReset();
-        await fetchBankAccountFn();
-      } else {
-        toast.error(response.message);
-      }
-    } else {
-      // Create Bank Account
-      const response = await createBankAccountFn(data);
-      if (response.success) {
-        toast.success(response.message);
-        handleReset();
-        await fetchBankAccountFn();
-      } else {
-        toast.error(response.message);
-      }
+    // Edit Bank
+    editBankAccountFn,
+    editBankAccounts,
+  } = useBank();
+
+  // useEffect(() => {
+  //   const getBankAccounts = async () => {
+  //     const accounts = await fetchBankAccountFn();
+  //     if (edit && editAccountId) {
+  //       const accountToEdit = accounts.find(
+  //         (account) => account.id === editAccountId
+  //       );
+  //       if (accountToEdit) {
+  //         setValue("bankName", accountToEdit.bankName);
+  //       }
+  //     }
+  //   };
+
+  //   if (edit && editAccountId) {
+  //     getBankAccounts();
+  //   }
+  // }, [edit, editAccountId, fetchBankAccountFn, setValue]);
+
+  useEffect(() => {
+    if (edit && editAccountId) {
+      reset({ bankName: getValues.bankName });
     }
-  };
+  }, [edit, editAccountId, reset]);
+
+  // useEffect(() => {
+  //   if (edit && editAccountId) {
+  //     const accountToEdit = fetchBankAccounts.find(
+  //       (account) => account.id === editAccountId
+  //     );
+  //     if (accountToEdit) {
+  //       reset({ bankName: accountToEdit.bankName });
+  //     }
+  //   }
+  // }, [edit, editAccountId, fetchBankAccounts, reset]);
 
   const handleReset = () => {
     setOpen(false);
-    reset();
+    setEdit(false);
+    reset({ bankName: "" });
+  };
+
+  const onSubmit = async (data) => {
+    if (edit) {
+      await editBankAccountFn(editAccountId, data);
+      console.log("editBankAccounts response is:- ", editBankAccounts);
+
+      // if (response.success) {
+      //   toast.success(response.message);
+      //   handleReset();
+      //   await fetchBankAccountFn();
+      // } else {
+      //   toast.error(response.message);
+      // }
+    } else {
+      // Create Bank Account
+      await createBankAccountFn(data);
+      if (createBank.success && !createBankLoading) {
+        toast.success(createBank.message);
+        handleReset();
+        await fetchBankAccountFn();
+      } else {
+        toast.error(response.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -93,18 +129,6 @@ const AddBankForm = ({
       console.log(createBankError);
     }
   }, [createBankError]);
-
-  useEffect(() => {
-    if (createBank && !creatBankLoading) {
-      if (createBank.success) {
-        toast.success(createBank.message);
-        handleReset();
-        fetchBankAccountFn();
-      } else {
-        toast.error(createBank.message);
-      }
-    }
-  }, [creatBankLoading, createBank]);
 
   return (
     <div>
@@ -131,6 +155,7 @@ const AddBankForm = ({
                     name="bankName"
                     className="w-full text-black text-base md:text-sm"
                   />
+
                   {errors.bankName && (
                     <p asChild className="text-red-600 text-sm">
                       {errors.bankName.message}
@@ -146,7 +171,7 @@ const AddBankForm = ({
                     className="p-5 md:p-3 text-base md:text-sm"
                   >
                     {edit ? (
-                      creatBankLoading ? (
+                      createBankLoading ? (
                         <>
                           <Loader /> Updating Bank...
                         </>
@@ -156,7 +181,7 @@ const AddBankForm = ({
                           Edit Bank
                         </>
                       )
-                    ) : creatBankLoading ? (
+                    ) : createBankLoading ? (
                       <>
                         <Loader /> Adding Bank...
                       </>
@@ -209,4 +234,4 @@ const AddBankForm = ({
   );
 };
 
-export default AddBankForm;
+export default AddForm;

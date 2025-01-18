@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,25 +20,17 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { toast } from "sonner";
-import { IndianRupee, Pen, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BankAccountContext } from "./BankAccountContext";
-import { deleteBank, getBankAccount } from "@/actions/bankAccout";
-import useFetch from "@/hooks/use-Fetch";
+import { BarLoader } from "react-spinners";
+import useMyBank from "./useMyBank";
+import { deleteBank } from "@/actions/oldCode/myBank";
 
-const DisplayBankAccount = () => {
-  const {
-    currentPage,
-    setCurrentPage,
-    data,
-    setData,
-    totalPages,
-    setTotalPages,
-    setOpen,
-    setEditData,
-    setEditMode,
-    // getBankAccounts,
-  } = useContext(BankAccountContext);
+const DisplayData = ({ setOpen, setEdit, setEditFormData }) => {
+  const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   const {
     // Fetch Bank
@@ -46,7 +38,7 @@ const DisplayBankAccount = () => {
     getBankRes,
     getBankError,
     getBankLoading,
-  } = useFetch(getBankAccount);
+  } = useMyBank();
 
   const handlePrevious = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -70,10 +62,9 @@ const DisplayBankAccount = () => {
   const getBankAccounts = async (currentPage) => {
     await getBankFn(currentPage);
   };
-
   useEffect(() => {
     getBankAccounts(currentPage);
-  }, [currentPage, getBankFn]);
+  }, [currentPage]);
 
   useEffect(() => {
     if (getBankError) {
@@ -94,21 +85,17 @@ const DisplayBankAccount = () => {
 
   const handleEdit = async (editAccData) => {
     setOpen(true);
-    setEditMode(true);
-    setEditData(editAccData);
+    setEdit(true);
+    setEditFormData(editAccData);
   };
 
   const handleDelete = async (accountId) => {
-    if (confirm("Press a button!")) {
-      const response = await deleteBank(accountId);
-      if (response.success) {
-        toast.success(response.message);
-        getBankAccounts(currentPage);
-      } else {
-        toast.error(response.message);
-      }
+    const response = await deleteBank(accountId);
+    if (response.success) {
+      toast.success(response.message);
+      getBankAccounts(currentPage);
     } else {
-      toast.success("Cancel process.");
+      toast.error(response.message);
     }
   };
 
@@ -118,45 +105,25 @@ const DisplayBankAccount = () => {
 
       <section>
         {getBankLoading ? (
-          // <BarLoader className="mt-4" width={"100%"} color="#9333ea" />
-          <p>Loading...</p>
+          <BarLoader className="mt-4" width={"100%"} color="#9333ea" />
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px] text-left">Sr. No.</TableHead>
                 <TableHead className="text-left">Bank Account Name</TableHead>
-                <TableHead className="text-right">Account Balance</TableHead>
-                <TableHead className="text-right">
-                  Balance Change Date
-                </TableHead>
-                <TableHead className="text-center">
-                  Current Default Account
-                </TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.length > 0 ? (
+              {data &&
                 data.map((item, i) => (
                   <TableRow key={item.id} id={item.id}>
                     <TableCell className="font-medium">{i + 1}</TableCell>
                     <TableCell className="font-medium text-left">
                       {item.bankName}
                     </TableCell>
-                    <TableCell className="font-medium text-right">
-                      <span className="flex items-center justify-end">
-                        <IndianRupee size={15} />
-                        {item.openingBalance}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-medium text-right">
-                      {new Date(item.date).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="font-medium text-center">
-                      {item.isDefault ? "Yes" : "No"}
-                    </TableCell>
-                    <TableCell className="font-medium flex space-x-1 items-center">
+                    <TableCell className="font-medium flex space-x-2 items-end ">
                       <Button variant="ghost" onClick={() => handleEdit(item)}>
                         <span className="bg-blue-100 rounded-full p-2 shadow-lg">
                           <Pen size={15} color="blue" />
@@ -172,20 +139,13 @@ const DisplayBankAccount = () => {
                       </Button>
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={3} className="text-center">
-                    No data available
-                  </TableCell>
-                </TableRow>
-              )}
+                ))}
             </TableBody>
           </Table>
         )}
       </section>
 
-      {/* Pagination */}
+      {/* shadcn paggination */}
       <section>
         <Pagination>
           <PaginationContent>
@@ -197,7 +157,7 @@ const DisplayBankAccount = () => {
             </PaginationItem>
             {getPageNumbers().map((page) => (
               <PaginationItem key={page} active={page === currentPage}>
-                <PaginationLink href="#" onClick={() => setCurrentPage(page)}>
+                <PaginationLink onClick={() => setCurrentPage(page)}>
                   {page}
                 </PaginationLink>
               </PaginationItem>
@@ -215,4 +175,4 @@ const DisplayBankAccount = () => {
   );
 };
 
-export default DisplayBankAccount;
+export default DisplayData;
