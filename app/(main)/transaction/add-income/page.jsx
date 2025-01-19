@@ -1,20 +1,22 @@
-import { getBank } from "@/actions/oldCode/banks";
-import { transactionCategorys } from "@/data/Categories";
 import React from "react";
-import AddIncomeForm from "../_components/AddIncomeForm";
+import { ArrowRightLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import AddTransaction from "../_components/AddTransaction";
 
 const AddIncomePage = async () => {
-  const bankAccounts = await getBank();
-
   return (
-    <div className="max-w-3xl mx-auto px-5">
-      <h2 className="gradient-subTitle text-4xl mb-8">Add Income</h2>
-
-      <section>
-        <AddIncomeForm
-          bankAccounts={bankAccounts}
-          categoires={transactionCategorys}
-        />
+    <div className="container mx-auto border p-4 max-w-7xl mt-8 shadow-sm rounded-md">
+      {/* Header Section */}
+      <section className="flex items-center justify-between mb-4">
+        <h2 className="flex items-center gradient-subTitle text-3xl space-x-3">
+          <span className="bg-blue-100 rounded-full p-2 shadow-lg">
+            <ArrowRightLeft color="black" size={25} />
+          </span>
+          <span>Add Transaction</span>
+        </h2>
+        <AddTransaction>
+          <Button>Add Bank Account</Button>
+        </AddTransaction>
       </section>
     </div>
   );

@@ -41,3 +41,9 @@ export const addIncomeSchema = z.object({
   description: z.string(),
   status: z.string().nonempty("Transaction status required."),
 });
+
+// Add Expense Schema
+export const addExpenseSchema = z.object({
+  firstName: z.string().nonempty("First Name required."),
+  lastName: z.string().nonempty("Last Name required."),
+});

@@ -65,7 +65,12 @@ const MainLayout = ({ children }) => {
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <StepsCard title="1" className="container mx-auto" />
-                <h2>Monthly Dashboard</h2>
+                <Link
+                  href="/monthly-dashboard"
+                  className="hover:underline hover:cursor-pointer hover:text-blue-500"
+                >
+                  <h2>Monthly Dashboard</h2>
+                </Link>
               </div>
               <div className="flex items-center space-x-2">
                 <StepsCard title="2" className="container mx-auto" />

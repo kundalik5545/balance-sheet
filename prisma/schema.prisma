@@ -29,6 +29,7 @@ model User {
   BankAccount    BankAccount[]
   AccountBalance AccountBalance[]
   Transaction    Transaction[]
+  userDetail     userDetail[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 
@@ -117,4 +118,14 @@ enum RecurringInterval {
   WEEKLY
   MONTHLY
   YEARLY
+}
+
+model userDetail {
+  id        String @id @default(uuid())
+  User      User   @relation(fields: [userId], references: [id])
+  userId    String
+  firstName String
+  lastName  String
+
+  @@map("user_details")
 }
