@@ -29,11 +29,10 @@ const MonthlyBudget = () => {
   };
 
   useEffect(() => {
+    getUserDetail(); // Always call it
     if (updateData) {
-      getUserDetail();
-      setUpdateData(false);
+      setUpdateData(false); // Only reset updateData when necessary
     }
-    getUserDetail();
   }, [updateData]);
 
   return (

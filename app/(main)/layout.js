@@ -38,7 +38,12 @@ const MainLayout = ({ children }) => {
                   href="/bank-account"
                   className="hover:underline hover:cursor-pointer hover:text-blue-500"
                 >
-                  <h2>Add Bank Accounts</h2>
+                  <Link
+                    href="/student-list"
+                    className="hover:underline hover:cursor-pointer hover:text-blue-500"
+                  >
+                    <h2>Student List</h2>
+                  </Link>
                 </Link>
               </div>
             </div>
