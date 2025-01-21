@@ -42,7 +42,7 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { transactionCategorys } from "@/data/Categories";
+import { transactionCategories } from "@/data/Categories";
 
 const IncomePage = () => {
   const [open, setOpen] = useState(false);
@@ -146,7 +146,7 @@ const AddIncomeForm = ({ children, open, editMode, setOpen }) => {
     console.log(data);
   };
 
-  const filteredCategories = transactionCategorys.filter(
+  const filteredCategories = transactionCategories.filter(
     (category) => category.type === incomeType
   );
 

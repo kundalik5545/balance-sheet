@@ -1,6 +1,6 @@
 "use server";
 
-import { addExpenseSchema } from "@/app/lib/Schema";
+import { addUserSchema } from "@/app/lib/Schema";
 import { prisma } from "@/db/db.config";
 import { auth } from "@clerk/nextjs/server";
 
@@ -21,7 +21,7 @@ export async function createUser(data) {
     }
 
     // 2. Validate incoming data
-    const validatedData = addExpenseSchema.parse(data);
+    const validatedData = addUserSchema.parse(data);
 
     // 3. Create user details
     const newUser = await prisma.userDetail.create({

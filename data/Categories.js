@@ -1,122 +1,122 @@
-export const transactionCategorys = [
+export const transactionCategories = [
   //Income Category
   {
     id: "Salary",
     name: "Salary",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Freelance",
     name: "Freelance",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Loan",
     name: "Loan",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Gift",
     name: "Gift",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Passive Income",
     name: "Passive Income",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Interest Earn",
     name: "Interest Earn",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Profit",
     name: "Profit",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Others",
     name: "Others",
-    type: "Income",
+    type: "INCOME",
   },
   {
     id: "Family",
     name: "Family",
-    type: "Income",
+    type: "INCOME",
   },
   //Investment Category
   {
     id: "Stocks",
     name: "Stocks",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "NPS",
     name: "NPS",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "FD",
     name: "FD",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "EPF",
     name: "EPF",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "PPF",
     name: "PPF",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "Gold & Silver",
     name: "Gold & Silver",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "Real Estate",
     name: "Real Estate",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "Bonds",
     name: "Bonds",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "Mutual Funds",
     name: "Mutual Funds",
-    type: "Investment",
+    type: "INVESTMENT",
   },
   {
     id: "Others",
     name: "Others",
-    type: "Investment",
+    type: "INVESTMENT",
   },
 
   //Transfer category
   {
     id: "Self",
     name: "Self",
-    type: "Transfer",
+    type: "TRANSFER",
   },
   {
     id: "Family",
     name: "Family",
-    type: "Transfer",
+    type: "TRANSFER",
   },
   {
     id: "Friends",
     name: "Friends",
-    type: "Transfer",
+    type: "TRANSFER",
   },
   {
     id: "Others",
     name: "Others",
-    type: "Transfer",
+    type: "TRANSFER",
   },
 ];
 

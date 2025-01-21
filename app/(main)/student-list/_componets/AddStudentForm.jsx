@@ -1,10 +1,10 @@
-// Source:
+// "use client";
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addExpenseSchema } from "@/app/lib/Schema";
+import { addUserSchema } from "@/app/lib/Schema";
 
 const AddStudentForm = ({ addUser, editUser, updateUserData, setEditUser }) => {
   const {
@@ -13,7 +13,7 @@ const AddStudentForm = ({ addUser, editUser, updateUserData, setEditUser }) => {
     reset,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(addExpenseSchema),
+    resolver: zodResolver(addUserSchema),
     defaultValues: { firstName: "", lastName: "" },
   });
 

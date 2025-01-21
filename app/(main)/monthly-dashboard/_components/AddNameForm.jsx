@@ -13,11 +13,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { addExpenseSchema } from "@/app/lib/Schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Landmark } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { createUser } from "@/actions/userDetails";
+import { addUserSchema } from "@/app/lib/Schema";
 
 const AddNameForm = ({ children, setUpdateData }) => {
   const [open, setOpen] = useState(false);
@@ -30,7 +30,7 @@ const AddNameForm = ({ children, setUpdateData }) => {
     getValues,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(addExpenseSchema),
+    resolver: zodResolver(addUserSchema),
     defaultValues: { firstName: "", lastName: "" },
   });
 

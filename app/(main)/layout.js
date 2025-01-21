@@ -38,12 +38,7 @@ const MainLayout = ({ children }) => {
                   href="/bank-account"
                   className="hover:underline hover:cursor-pointer hover:text-blue-500"
                 >
-                  <Link
-                    href="/student-list"
-                    className="hover:underline hover:cursor-pointer hover:text-blue-500"
-                  >
-                    <h2>Student List</h2>
-                  </Link>
+                  <h2>Add Bank Account</h2>
                 </Link>
               </div>
             </div>
@@ -79,7 +74,12 @@ const MainLayout = ({ children }) => {
               </div>
               <div className="flex items-center space-x-2">
                 <StepsCard title="2" className="container mx-auto" />
-                <h2>Annual Dashboard</h2>
+                <Link
+                  href="/student-list"
+                  className="hover:underline hover:cursor-pointer hover:text-blue-500"
+                >
+                  <h2>Student List</h2>
+                </Link>
               </div>
             </div>
           </div>
