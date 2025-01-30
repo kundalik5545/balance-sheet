@@ -15,7 +15,6 @@ export const addBankSchema = z.object({
 });
 
 // Add Transaction Schema
-<<<<<<< HEAD
 export const addTransactionSchema = z.object({
   type: z.enum(["INCOME", "EXPENSE", "TRANSFER", "INVESTMENT"]),
   category: z.string().min(1, "Category is required"),
@@ -64,23 +63,6 @@ export const transactionSchema = z.object({
   bankAccountId: z.string().nonempty("Bank account id required."),
   transferAccountId: z.string().optional(),
 });
-=======
-// export const addTransactionSchema = z.object({
-//   bankAccountId: z.string().nonempty("Bank account id required."),
-//   transferAccountId: z.string().optional(),
-//   type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "TRANSFER"]),
-//   category: z.string().nonempty("Transaction category required."),
-//   amount: z.preprocess(
-//     (val) => Number(val), // Preprocess the value into a number
-//     z.number().min(1, "Amount must be greater than 0") // Validate that it is a number and meets the minimum value
-//   ),
-//   // amount: z.string().min(1, "Amount must be greater than 0"), // Validate that it is a number and meets the minimum value
-
-//   date: z.date(),
-//   description: z.string(),
-//   status: z.string().nonempty("Transaction status required."),
-// });
->>>>>>> 18f3fd5dce03f7061254658474d6ea4283cb01e2
 
 // Add Income Schema
 export const addIncomeSchema = z.object({
@@ -95,20 +77,20 @@ export const addIncomeSchema = z.object({
 });
 
 // Add Transaction Schema
-export const addTransactionSchema = z.object({
-  // bankAccountId: z.string().nonempty("Bank account id required."),
-  type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "TRANSFER"], {
-    required_error: "Transaction type must be selected.",
-  }),
-  category: z.string().nonempty("Transaction category required."),
-  amount: z.preprocess(
-    (val) => Number(val),
-    z.number().min(1, "Amount should be greater than 0.")
-  ),
-  date: z.date(),
-  // description: z.string(),
-  // status: z.string().nonempty("Transaction status required."),
-});
+// export const addTransactionSchema = z.object({
+//   // bankAccountId: z.string().nonempty("Bank account id required."),
+//   type: z.enum(["INCOME", "EXPENSE", "INVESTMENT", "TRANSFER"], {
+//     required_error: "Transaction type must be selected.",
+//   }),
+//   category: z.string().nonempty("Transaction category required."),
+//   amount: z.preprocess(
+//     (val) => Number(val),
+//     z.number().min(1, "Amount should be greater than 0.")
+//   ),
+//   date: z.date(),
+//   // description: z.string(),
+//   // status: z.string().nonempty("Transaction status required."),
+// });
 
 // Add User Schema
 export const addUserSchema = z.object({

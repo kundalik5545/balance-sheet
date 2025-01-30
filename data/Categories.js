@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export const transactionCategories1 = [
   // Income Category
   { id: 1, name: "Salary", type: "INCOME" },
@@ -10,106 +9,6 @@ export const transactionCategories1 = [
   { id: 7, name: "Profit", type: "INCOME" },
   { id: 8, name: "Others", type: "INCOME" },
   { id: 9, name: "Family", type: "INCOME" },
-=======
-export const transactionCategories = [
-  //Income Category
-  {
-    id: "Salary",
-    name: "Salary",
-    type: "INCOME",
-  },
-  {
-    id: "Freelance",
-    name: "Freelance",
-    type: "INCOME",
-  },
-  {
-    id: "Loan",
-    name: "Loan",
-    type: "INCOME",
-  },
-  {
-    id: "Gift",
-    name: "Gift",
-    type: "INCOME",
-  },
-  {
-    id: "Passive Income",
-    name: "Passive Income",
-    type: "INCOME",
-  },
-  {
-    id: "Interest Earn",
-    name: "Interest Earn",
-    type: "INCOME",
-  },
-  {
-    id: "Profit",
-    name: "Profit",
-    type: "INCOME",
-  },
-  {
-    id: "Others",
-    name: "Others",
-    type: "INCOME",
-  },
-  {
-    id: "Family",
-    name: "Family",
-    type: "INCOME",
-  },
-  //Investment Category
-  {
-    id: "Stocks",
-    name: "Stocks",
-    type: "INVESTMENT",
-  },
-  {
-    id: "NPS",
-    name: "NPS",
-    type: "INVESTMENT",
-  },
-  {
-    id: "FD",
-    name: "FD",
-    type: "INVESTMENT",
-  },
-  {
-    id: "EPF",
-    name: "EPF",
-    type: "INVESTMENT",
-  },
-  {
-    id: "PPF",
-    name: "PPF",
-    type: "INVESTMENT",
-  },
-  {
-    id: "Gold & Silver",
-    name: "Gold & Silver",
-    type: "INVESTMENT",
-  },
-  {
-    id: "Real Estate",
-    name: "Real Estate",
-    type: "INVESTMENT",
-  },
-  {
-    id: "Bonds",
-    name: "Bonds",
-    type: "INVESTMENT",
-  },
-  {
-    id: "Mutual Funds",
-    name: "Mutual Funds",
-    type: "INVESTMENT",
-  },
-  {
-    id: "Others",
-    name: "Others",
-    type: "INVESTMENT",
-  },
->>>>>>> 18f3fd5dce03f7061254658474d6ea4283cb01e2
 
   // Investment Category
   { id: 10, name: "Stocks", type: "INVESTMENT" },
@@ -131,7 +30,6 @@ export const transactionCategories = [
 
   // Expense Category
   {
-<<<<<<< HEAD
     id: 24,
     name: "Housing",
     type: "EXPENSE",
@@ -466,26 +364,6 @@ export const transactionCategories3 = [
     name: "📦 Other Expenses",
     type: "EXPENSE",
     subcategories: ["Miscellaneous"],
-=======
-    id: "Self",
-    name: "Self",
-    type: "TRANSFER",
-  },
-  {
-    id: "Family",
-    name: "Family",
-    type: "TRANSFER",
-  },
-  {
-    id: "Friends",
-    name: "Friends",
-    type: "TRANSFER",
-  },
-  {
-    id: "Others",
-    name: "Others",
-    type: "TRANSFER",
->>>>>>> 18f3fd5dce03f7061254658474d6ea4283cb01e2
   },
 ];
 
