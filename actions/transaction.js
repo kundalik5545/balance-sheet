@@ -524,33 +524,69 @@ export async function createTransaction(data) {
   }
 }
 
-//dbOperation process used...
-// export async function updateBankBalance(data) {
-//   try {
-//     // 1. Check if user exists and is logged in
-//     const { userId } = await auth();
-//     if (!userId) throw new Error("Unauthorized User!");
+// Get Transaction
+export async function getTransaction(page = 1) {
+  try {
+    // 1. Check if user exists and is logged in
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized User!");
 
-//     const user = await prisma.user.findUnique({
-//       where: { clerkUserId: userId },
-//     });
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+    });
 
-//     if (!user) throw new Error("User not found");
+    if (!user) throw new Error("User not found");
 
-//     // 2. Start Transactions
-//     let dbOperations = [];
+    // Paggination
+    const pageSize = 10;
 
-//     // 3. Insert bank data in the database
-//     dbOperations.push(
-//       prisma.accountBalance.create({
-//         data: {
-//           accountBalance: data.accountBalance,
-//         },
-//       })
-//     );
+    // 2. Get all transactions with paggination
 
-//     // 4. Commit the transaction
-//     await prisma.$transaction(dbOperations);
-//   } catch (error) {
-//     console.log(error.message);
-//   }
+    const [totalRecords, transactions] = await prisma.$transaction(
+      async (tx) => {
+        const totalRecords = await tx.transaction.count({
+          where: { userId: user.id },
+        });
+        const transactions = await tx.transaction.findMany({
+          where: { userId: user.id },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          orderBy: { date: "desc" },
+        });
+        return [totalRecords, transactions];
+      }
+    );
+
+    const totalPages = Math.ceil(totalRecords / pageSize);
+
+    // const totalRecords = await prisma.transaction.count({
+    //   where: { userId: user.id },
+    // });
+
+    // const transactions = await prisma.transaction.findMany({
+    //   where: { userId: user.id },
+    //   skip: (page - 1) * pageSize,
+    //   take: pageSize,
+    // });
+
+    const formattedTransactions = transactions.map((transaction) => {
+      return {
+        ...transaction,
+        amount: transaction.amount.toNumber(),
+      };
+    });
+
+    return {
+      success: true,
+      message: "Transactions fetched successfully",
+      data: {
+        allTransactions: formattedTransactions,
+        totalRecords,
+        totalPages,
+        currentPage: page,
+      },
+    };
+  } catch (error) {
+    console.log(error.message);
+  }
+}

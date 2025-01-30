@@ -168,7 +168,7 @@ const AddBankForm = ({ children }) => {
           }}
         >
           <DrawerTrigger asChild>{children}</DrawerTrigger>
-          <DrawerContent className="flex sm:w-[500px] md:w-[700px] lg:w-[900px] container mx-auto md:p-4 pb-10">
+          <DrawerContent className="flex sm:w-[500px] md:w-[700px] lg:w-[900px] container mx-auto md:p-4 pb-1 md:pb-10">
             <DrawerHeader>
               <DrawerTitle className="gradient-subTitle flex justify-center items-center gradient-subTitle text-3xl space-x-3">
                 <span className="bg-blue-100 rounded-full p-2 shadow-lg">
@@ -326,7 +326,7 @@ const AddBankForm = ({ children }) => {
 
                 {/* Info Section */}
                 <section>
-                  <p className="pb-4 flex items-center space-x-2">
+                  <p className="pb-4 flex items-center space-x-1">
                     <span className="bg-green-100 rounded-full p-2 shadow-lg">
                       <CheckCheck color="green" />
                     </span>
@@ -338,7 +338,7 @@ const AddBankForm = ({ children }) => {
                     </span>
                     <span>Add 1 bank at a time.</span>
                   </p>
-                  <p className="pb-4 flex items-center space-x-2">
+                  <p className="pb-4 hidden md:flex items-center space-x-2  ">
                     <span className="bg-green-100 rounded-full p-2 shadow-lg">
                       <CheckCheck color="green" />
                     </span>

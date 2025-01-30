@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { BankAccountContext } from "./BankAccountContext";
 import { deleteBank, getBankAccount } from "@/actions/bankAccout";
 import useFetch from "@/hooks/use-Fetch";
+import { formatCurrencyINR } from "@/app/lib/currencyFormatter";
 
 const DisplayBankAccount = () => {
   const {
@@ -114,7 +115,9 @@ const DisplayBankAccount = () => {
 
   return (
     <div>
-      <h3 className="text-2xl gradient-subTitle">Bank Accounts List</h3>
+      <h3 className="text-2xl gradient-subTitle pt-3 pr-3 ">
+        Bank Accounts List
+      </h3>
 
       <section>
         {getBankLoading ? (
@@ -146,8 +149,7 @@ const DisplayBankAccount = () => {
                     </TableCell>
                     <TableCell className="font-medium text-right">
                       <span className="flex items-center justify-end">
-                        <IndianRupee size={15} />
-                        {item.openingBalance}
+                        {formatCurrencyINR(item.openingBalance)}
                       </span>
                     </TableCell>
                     <TableCell className="font-medium text-right">

@@ -18,6 +18,7 @@ import { BankAccountContext } from "./_components/BankAccountContext";
 import { totalBankAccountBalance } from "@/actions/bankAccout";
 import { toast } from "sonner";
 import BankBarChart from "./_components/BarChart";
+import { formatCurrencyINR } from "@/app/lib/currencyFormatter";
 
 const BankAccountPage = () => {
   const [open, setOpen] = useState(false);
@@ -32,25 +33,19 @@ const BankAccountPage = () => {
   const [monthlyExpense, setMonthlyExpense] = useState();
   const [remainingBalance, setRemainingBalance] = useState();
 
-  //balance formatter in indian ruppes format
-  const formatter = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-  });
-
-  //finding total income in current month from transaction table with type incomeuseEffect(() => {
-
   const fetchFinancialSummary = async () => {
     try {
       const response = await totalBankAccountBalance();
+      console.log(response);
+
       if (response.success) {
-        setBankBalance(formatter.format(response.totalBalanceThisMonth));
-        setMonthlyIncome(formatter.format(response.totalIncomeThisMonth));
-        setMonthlyExpense(formatter.format(response.totalExpenseThisMonth));
+        setBankBalance(formatCurrencyINR(response.totalBalanceThisMonth));
+        setMonthlyIncome(formatCurrencyINR(response.totalIncomeThisMonth));
+        setMonthlyExpense(formatCurrencyINR(response.totalExpenseThisMonth));
         // Calculate remaining balance and format for display
         const balance =
           response.totalIncomeThisMonth - response.totalExpenseThisMonth;
-        setRemainingBalance(formatter.format(balance));
+        setRemainingBalance(formatCurrencyINR(balance));
 
         return chartData;
       } else {
@@ -83,9 +78,9 @@ const BankAccountPage = () => {
         // getBankAccounts,
       }}
     >
-      <div className="container mx-auto border p-4 max-w-7xl mt-8 shadow-sm rounded-md">
-        {/* Header Section */}
-        <section className="flex items-center justify-between mb-4">
+      <div>
+        {/* Header Section  with add bank account button*/}
+        <section className="flex items-center justify-between mb-2">
           <h2 className="flex items-center gradient-subTitle text-3xl space-x-3">
             <span className="bg-blue-100 rounded-full p-2 shadow-lg">
               <Landmark color="black" size={25} />
@@ -96,13 +91,15 @@ const BankAccountPage = () => {
             <Button>Add Bank Account</Button>
           </AddBankForm>
         </section>
+
+        <hr className="mb-2" />
         {/* Quick Stats card - 4 cards
         1. Total balance
         2. MOnthly Income
         3. Monthly Expense
         4. Saving/ Investments
         */}
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pl-3 pr-3 pb-1 md:pb-4">
           <QuickStatCard
             topTitle={"Total Balance"}
             MainAmt={bankBalance}
@@ -137,16 +134,13 @@ const BankAccountPage = () => {
           />
         </section>
 
-        {/* Add Bank account Button */}
-        <section></section>
-
         {/* Display account balance Chart 
         pie - for different accounts
         bar - for balance
         trend - for every month balance
         
         */}
-        <section className="flex justify-between flex-wrap">
+        <section className="flex justify-between flex-wrap pl-3 pr-3 pb-1 md:pb-4 ">
           <BankBarChart
             bankBalance={bankBalance}
             Income={monthlyIncome}

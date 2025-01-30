@@ -180,11 +180,17 @@ export const getBankAccount = async (page = 1) => {
 
     const totalPages = Math.ceil(totalRecords / pageSize);
 
+    // Convert Decimal values before sending to the client
+    const formattedAccounts = bankAccounts.map((account) => ({
+      ...account,
+      openingBalance: account.openingBalance.toNumber(),
+    }));
+
     return {
       success: true,
       message: "Bank accounts fetched successfully",
       data: {
-        bankAccounts,
+        bankAccounts: formattedAccounts,
         totalRecords,
         totalPages,
         currentPage: page,
@@ -350,7 +356,7 @@ export const totalBankAccountBalance = async () => {
     const totalExpense = await prisma.transaction.aggregate({
       where: {
         userId: user.id,
-        type: "EXPENSE",
+        type: "INVESTMENT",
         date: {
           gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
           lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
@@ -361,6 +367,8 @@ export const totalBankAccountBalance = async () => {
       },
     });
 
+    console.log("totalExpense", totalExpense);
+
     const totalMonthlyExpense_ThisMonth = totalExpense._sum.amount || 0; // Use the summed value or default to 0 if null
 
     if (!totalIncome) throw new Error("Total income not found");
@@ -368,8 +376,8 @@ export const totalBankAccountBalance = async () => {
     return {
       success: true,
       message: "Total bank account balance fetched successfully",
-      totalBalanceThisMonth: totalOpeningBalance,
-      totalIncomeThisMonth: totalAmount,
+      totalBalanceThisMonth: totalOpeningBalance.toNumber(),
+      totalIncomeThisMonth: totalAmount.toNumber(),
       totalExpenseThisMonth: totalMonthlyExpense_ThisMonth,
     };
   } catch (error) {
@@ -420,6 +428,54 @@ export const totalIncome = async () => {
     };
   } catch (error) {
     console.error("Error getting total income:", error.message);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+// get default bank account
+export const getDefaultBankAccount = async () => {
+  try {
+    // 1. Check if user exists and is logged in
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized User!");
+
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    // 2. Get default bank account
+    const defaultBankAccount = await prisma.bankAccount.findFirst({
+      where: {
+        userId: user.id,
+        isDefault: true,
+      },
+    });
+
+    if (!defaultBankAccount)
+      throw new Error("Default bank account not found, plesae make one.");
+
+    const otherAccount = await prisma.bankAccount.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        bankName: "asc",
+      },
+    });
+
+    return {
+      success: true,
+      message: "Default bank account fetched successfully",
+      data: defaultBankAccount,
+      otherAccount: otherAccount,
+    };
+  } catch (error) {
+    console.error("Error getting default bank account:", error.message);
     return {
       success: false,
       message: error.message,

@@ -10,7 +10,7 @@ const QuickStatCard = ({
   bgColor,
 }) => {
   return (
-    <div className="bg-white p-4 rounded-lg border border-neutral-200/30">
+    <div className="bg-white p-4 rounded-lg border border-neutral-200/30 shadow-md mb-1 sm:mb-5 mt-2">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-neutral-500 tracking-wider">{topTitle}</p>
