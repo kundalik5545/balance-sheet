@@ -16,14 +16,14 @@ const Header = async () => {
         </div>
         <div className="menu flex items-center justify-end space-x-4 md:space-x-14 w-1/2 ">
           <div className="flex menu-item space-x-2">
-            <Link href="/add-category" className="hidden sm:block">
+            <Link href="/transaction/add-income" className="hidden sm:block">
               <Button className="bg-green-50 text-green-500" variant="outline">
                 <CircleArrowUp color="green" size={20} />
                 <span className="hidden md:inline">Income</span>
               </Button>
             </Link>
 
-            <Link href="/transaction/add-income" className="hidden sm:block">
+            <Link href="/transaction/add-expense" className="hidden sm:block">
               <Button className="bg-red-50 text-red-500" variant="outline">
                 <CircleArrowDown color="red" size={20} />
                 <span className="hidden md:inline">Expense</span>

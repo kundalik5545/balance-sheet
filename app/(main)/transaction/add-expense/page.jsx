@@ -1,9 +1,14 @@
+import {
+  ArrowRightLeft,
+  ChevronDown,
+  ChevronDownCircle,
+  CircleMinus,
+} from "lucide-react";
 import React from "react";
-import { ArrowRightLeft, CirclePlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import AddTransaction from "../_components/AddTransaction";
+import { Button } from "@/components/ui/button";
 
-const AddIncomePage = async () => {
+const ExpensePage = () => {
   return (
     <div className="container mx-auto border p-4 max-w-7xl mt-8 shadow-sm rounded-md">
       {/* Header Section */}
@@ -16,16 +21,12 @@ const AddIncomePage = async () => {
         </h2>
         <AddTransaction>
           <Button>
-            <CirclePlus /> Add Income Transaction
+            <CircleMinus /> Add Expense Transaction
           </Button>
         </AddTransaction>
       </section>
-
-      {/* Add Transaction Form */}
-      {/* Display Transaction Form */}
-      <section></section>
     </div>
   );
 };
 
-export default AddIncomePage;
+export default ExpensePage;

@@ -74,7 +74,12 @@ export default function Home() {
               </div>
               <div className="flex items-center space-x-2">
                 <StepsCard title="2" className="container mx-auto" />
-                <h2>Annual Dashboard</h2>
+                <Link
+                  href="/student-list"
+                  className="hover:underline hover:cursor-pointer hover:text-blue-500"
+                >
+                  <h2>Student List</h2>
+                </Link>
               </div>
             </div>
           </div>

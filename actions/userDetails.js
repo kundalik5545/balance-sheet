@@ -1,6 +1,6 @@
 "use server";
 
-import { addExpenseSchema } from "@/app/lib/Schema";
+import { addUserSchema } from "@/app/lib/Schema";
 import { prisma } from "@/db/db.config";
 import { auth } from "@clerk/nextjs/server";
 
@@ -21,7 +21,7 @@ export async function createUser(data) {
     }
 
     // 2. Validate incoming data
-    const validatedData = addExpenseSchema.parse(data);
+    const validatedData = addUserSchema.parse(data);
 
     // 3. Create user details
     const newUser = await prisma.userDetail.create({
@@ -61,9 +61,10 @@ export async function getUserDetails() {
     // 2. Get user details
     const userDetails = await prisma.userDetail.findMany({
       where: { userId: user.id },
+      orderBy: [{ firstName: "asc" }],
     });
 
-    if (!userDetails) throw new Error("User details not found");
+    if (userDetails.length === 0) throw new Error("User details not found");
 
     return {
       success: true,
@@ -75,3 +76,75 @@ export async function getUserDetails() {
     console.log(error.message);
   }
 }
+
+// /services/userService.js
+export const deleteUser = async (dataId) => {
+  try {
+    // 1. Check if user exists and is logged in
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized User!");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // 2. Delete user details
+    const deletedUser = await prisma.userDetail.delete({
+      where: { id: dataId },
+    });
+
+    if (!deletedUser) {
+      throw new Error("User not found");
+    }
+
+    return { success: true, message: "User deleted successfully" };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
+export const updateUser = async (dataId, data) => {
+  console.log("updateUser", dataId, data);
+  try {
+    // 1. Check if user exists and is logged in
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized User!");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // 2. Validate incoming data
+    const validatedData = addExpenseSchema.parse(data);
+
+    // 3. Update user details
+    const updatedUser = await prisma.userDetail.update({
+      where: { id: dataId },
+      data: {
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+      },
+    });
+
+    return {
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    };
+  } catch (error) {
+    return { success: false, message: error.message };
+    log("updateUser", error.message);
+  }
+};
